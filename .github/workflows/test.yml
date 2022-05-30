@@ -17,10 +17,22 @@ jobs:
       with:
         envs: 'MYTOKEN MYTOKEN2'
         usesh: true
-        prepare: pkg install -y curl ca_root_nss
+        prepare: pkg install -y curl ca_root_nss git-lite
         run: |
-          pwd
-          ls -lah
-          whoami
-          env
-          freebsd-version
+          git clone git@github.com:indgy/pfSense-pkg-monit.git
+          cd pfSense-pkg-monit
+          make package
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: true
+        prerelease: true
